@@ -16,3 +16,33 @@ steps:
      - '-c'
      - |
        docker push asia-northeast3-docker.pkg.dev/$PROJECT_ID/was-registry/was:$TAG_NAME
+
+
+### Deploy
+  - id: 'deploy'
+    name: 'gcr.io/cloud-builders/gcloud'
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=${_CLOUDSDK_COMPUTE_ZONE}'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLOUDSDK_CONTAINER_CLUSTER}'
+      - 'KUBECONFIG=/kube/config'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+          CLUSTER=${_CLOUDSDK_CONTAINER_CLUSTER}
+          PROJECT=$$(gcloud config get-value core/project)
+          ZONE=${_CLOUDSDK_COMPUTE_ZONE}
+          export PROJECT_ID=$PROJECT_ID
+          export CLUSTER=terraform-tae-gke
+          export ZONE=asia-northeast3
+
+          gcloud container clusters get-credentials "$${CLUSTER}" \
+            --project "$${PROJECT}" \
+            --zone "$${ZONE}"  
+
+
+
+          sed -i 's|gcr.io/cloud-solutions-images/gceme:.*|asia-northeast3-docker.pkg.dev/terraform-tae/was-registry/was|' ./k8s/*.yaml
+          
+          kubectl get ns was || kubectl create ns was
+          kubectl apply --namespace was --recursive -f ./k8s/
