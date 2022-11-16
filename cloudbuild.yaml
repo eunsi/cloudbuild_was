@@ -6,7 +6,7 @@ steps:
     args:
       - '-c'
       - |
-        docker build -t asia-northeast3-docker.pkg.dev/$PROJECT_ID/was-registry/was:$TAG_NAME .
+        docker build -t asia-northeast3-docker.pkg.dev/$PROJECT_ID/fatclinic/was:$TAG_NAME .
 
 ### Publish
   - name: 'gcr.io/cloud-builders/docker'
@@ -15,7 +15,7 @@ steps:
     args:
      - '-c'
      - |
-       docker push asia-northeast3-docker.pkg.dev/$PROJECT_ID/was-registry/was:$TAG_NAME
+       docker push asia-northeast3-docker.pkg.dev/$PROJECT_ID/fatclinic/was:$TAG_NAME
 
 
 ### Deploy
@@ -42,7 +42,7 @@ steps:
 
 
 
-          sed -i 's|gcr.io/cloud-solutions-images/gceme:.*|asia-northeast3-docker.pkg.dev/$PROJECT_ID/was-registry/was|' ./k8s/*.yaml
+          sed -i 's|gcr.io/cloud-solutions-images/gceme:.*|asia-northeast3-docker.pkg.dev/$PROJECT_ID/fatclinic/was|' ./k8s/*.yaml
           
           kubectl get ns was || kubectl create ns was
           kubectl apply --namespace was --recursive -f ./k8s/
