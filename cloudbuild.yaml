@@ -42,7 +42,7 @@ steps:
 
 
 
-          sed -i 's|gcr.io/cloud-solutions-images/gceme:.*|asia-northeast3-docker.pkg.dev/$PROJECT_ID/fatclinic/was|' ./k8s/*.yaml
+          sed -i 's|asia-northeast3-docker.pkg.dev/exemplary-datum-362307/fatclinic/was:.*|asia-northeast3-docker.pkg.dev/exemplary-datum-362307/fatclinic/was:$TAG_NAME|' ./k8s/*.yaml
           
           kubectl get ns was || kubectl create ns was
           kubectl apply --namespace was --recursive -f ./k8s/
